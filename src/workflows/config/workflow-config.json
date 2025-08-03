@@ -1,0 +1,54 @@
+{
+  "workflows": {
+    "monitor": {
+      "initialState": "MONITORING",
+      "completionState": "AUDIT_COMPLETE",
+      "states": [
+        "MONITORING",
+        "CHANGE_DETECTION",
+        "RECIPE_EXECUTION",
+        "QUALITY_AUDIT",
+        "DISTRIBUTION",
+        "AUDIT_COMPLETE"
+      ]
+    },
+    "trigger": {
+      "initialState": "CHANGE_DETECTION",
+      "completionState": "TRIGGER_COMPLETE",
+      "states": [
+        "CHANGE_DETECTION",
+        "RECIPE_EXECUTION",
+        "QUALITY_AUDIT",
+        "DISTRIBUTION",
+        "TRIGGER_COMPLETE"
+      ]
+    },
+    "schedule": {
+      "initialState": "MONITORING",
+      "completionState": "SCHEDULE_COMPLETE",
+      "states": [
+        "MONITORING",
+        "CHANGE_DETECTION",
+        "RECIPE_EXECUTION",
+        "QUALITY_AUDIT",
+        "DISTRIBUTION",
+        "SCHEDULE_COMPLETE"
+      ]
+    }
+  },
+  "stateMapping": {
+    "MONITORING": "MonitoringState",
+    "CHANGE_DETECTION": "ChangeDetectionState",
+    "RECIPE_EXECUTION": "RecipeExecutionState",
+    "QUALITY_AUDIT": "QualityAuditState",
+    "DISTRIBUTION": "DistributionState",
+    "AUDIT_COMPLETE": "AuditCompleteState",
+    "TRIGGER_COMPLETE": "TriggerCompleteState",
+    "SCHEDULE_COMPLETE": "ScheduleCompleteState"
+  },
+  "completionStates": {
+    "monitor": "AuditCompleteState",
+    "trigger": "TriggerCompleteState",
+    "schedule": "ScheduleCompleteState"
+  }
+}
