@@ -1,0 +1,39 @@
+{
+  "monitoring": {
+    "interval": 1
+  },
+  "screenshots": {
+    "formats": ["png", "jpeg"],
+    "viewports": [
+      { "width": 1920, "height": 1080, "name": "desktop" },
+      { "width": 390, "height": 844, "name": "mobile" }
+    ],
+    "quality": 90,
+    "timeout": 15000,
+    "waitForNavigation": true
+  },
+  "changeDetection": {
+    "threshold": 0.1,
+    "includeAA": false,
+    "alpha": 0.1,
+    "diffOutputDir": "./output/diffs"
+  },
+  "recipes": [
+    {
+      "name": "homepage-screenshot",
+      "description": "Capture homepage screenshot",
+      "steps": [
+        {
+          "type": "navigate",
+          "url": "http://localhost:3000",
+          "filename": "homepage"
+        },
+        {
+          "type": "navigate",
+          "url": "http://localhost:3000/dashboard",
+          "filename": "dashboard"
+        }
+      ]
+    }
+  ]
+}
