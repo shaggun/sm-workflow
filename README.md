@@ -90,8 +90,7 @@ tests/
 └── integration/            # End-to-end workflow tests (69 tests)
 
 config/
-├── demo-config.json       # Development configuration
-└── test-config.json       # Test environment settings
+└── demo-config.json       # Development configuration
 
 output/                     # Generated screenshots and reports
 ├── final/                  # Baseline screenshots (permanent)
