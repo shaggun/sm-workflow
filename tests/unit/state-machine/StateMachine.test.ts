@@ -150,6 +150,9 @@ describe('StateMachine', () => {
     const stateB = states.get('STATE_B');
     const stateC = states.get('STATE_C');
     
+    // Verify initial state
+    expect(stateMachine.getCurrentStateName()).toBeNull();
+    
     let executeCount = 0;
     const executeSpy = vi.spyOn(stateA, 'execute').mockImplementation(async () => {
       executeCount++;
@@ -162,21 +165,27 @@ describe('StateMachine', () => {
     });
     
     const stateBSpy = vi.spyOn(stateB, 'execute').mockImplementation(async () => {
+      // Verify we're in STATE_B
+      expect(stateMachine.getCurrentStateName()).toBe('STATE_B');
       // Immediately trigger completion and stop
       setTimeout(() => stateMachine.stop(), 5);
       return EventBuilder.create('COMPLETE');
     });
     
-    vi.spyOn(stateC, 'execute').mockResolvedValue(null);
+    const stateCExecuteSpy = vi.spyOn(stateC, 'execute').mockResolvedValue(null);
     
     const startPromise = stateMachine.start();
     
     // Wait for controlled execution
     await new Promise(resolve => setTimeout(resolve, 30));
     
-    // Verify transitions occurred
+    // Verify transitions occurred in the correct order
     expect(executeSpy).toHaveBeenCalled();
     expect(stateBSpy).toHaveBeenCalled();
+    
+    // Verify final state is STATE_C after COMPLETE event
+    expect(stateMachine.getCurrentStateName()).toBe('STATE_C');
+    expect(stateCExecuteSpy).toHaveBeenCalled();
     
     await stateMachine.stop();
     await startPromise.catch(() => {});
