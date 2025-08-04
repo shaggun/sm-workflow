@@ -8,11 +8,10 @@ This project demonstrates a background monitoring system that automatically capt
 
 ## Key Features
 
-- **🔄 State Machine Architecture**: Event workflow with distinct states and 3 execution modes
+- **🔄 State Machine Architecture**: Event-driven workflow with distinct states and 3 execution modes
 - **📸 Automated Screenshot Capture**: Multi-viewport screenshot automation using Puppeteer
 - **🔍 Visual Change Detection**: Pixel-level diff analysis with configurable thresholds using pixelmatch
 - **⏰ Flexible Scheduling**: Three execution modes: continuous monitoring, manual trigger, and scheduled execution
-- **🎯 WorkflowMode System**: Type-safe enum-based mode selection with conditional state transitions
 - **✅ Quality Validation**: Screenshot quality checks using Sharp image processing
 - **📊 Audit Trail**: Execution summaries and quality reports
 - **🏗️ Configuration-Driven**: JSON-based workflow configuration with factory patterns
@@ -48,8 +47,10 @@ src/
 │   ├── State.ts            # State interface and base classes
 │   ├── Event.ts            # Event system and builders
 │   └── Transition.ts       # Transition management logic
-├── types/                   # Type definitions
-│   └── WorkflowMode.ts     # Enum-based workflow mode system
+├── types/                   # Type definitions and enums
+│   ├── WorkflowMode.ts     # Workflow execution mode enums
+│   ├── WorkflowState.ts    # State machine state enums
+│   └── WorkflowEvent.ts    # State transition event enums
 ├── screenshot/             # Screenshot capture services
 │   ├── ScreenshotService.ts # Puppeteer-based screenshot capture
 │   ├── RecipeEngine.ts     # Automation recipe execution
@@ -157,7 +158,7 @@ The system uses 8 distinct states with conditional routing:
 - **Actions**: Puppeteer automation, multi-viewport capture
 - **Transitions**:
   - `SCREENSHOTS_CAPTURED` → QUALITY_AUDIT
-  - `EXECUTION_FAILED` → MONITORING (with retry logic)
+  - `EXECUTION_FAILED` → MONITORING
 
 ##### 4. ✅ **QUALITY_AUDIT**
 
@@ -165,7 +166,7 @@ The system uses 8 distinct states with conditional routing:
 - **Actions**: Sharp-based quality checks, format validation
 - **Transitions**:
   - `QUALITY_CHECK_PASSED` → DISTRIBUTION
-  - `QUALITY_CHECK_FAILED` → RECIPE_EXECUTION (retry)
+  - `QUALITY_CHECK_FAILED` → RECIPE_EXECUTION
 
 ##### 5. 📤 **DISTRIBUTION**
 
@@ -173,7 +174,7 @@ The system uses 8 distinct states with conditional routing:
 - **Actions**: Save screenshots, update baselines, cleanup temp files
 - **Transitions**:
   - `SYNC_SUCCESSFUL` → Mode-specific completion states
-  - `SYNC_FAILED` → MONITORING (retry with backoff)
+  - `SYNC_FAILED` → MONITORING
 
 #### **Mode-Specific Completion States:**
 
@@ -195,25 +196,60 @@ The system uses 8 distinct states with conditional routing:
 - **Actions**: Generate detailed audit summary with metrics
 - **Transitions**: None (terminal state)
 
+### Type-Safe Enum System
+
+The system uses TypeScript enums for improved type safety and scalability:
+
+#### **WorkflowState Enum**
+```typescript
+export enum WorkflowState {
+  MONITORING = 'MONITORING',
+  CHANGE_DETECTION = 'CHANGE_DETECTION',
+  RECIPE_EXECUTION = 'RECIPE_EXECUTION',
+  QUALITY_AUDIT = 'QUALITY_AUDIT',
+  DISTRIBUTION = 'DISTRIBUTION',
+  AUDIT_COMPLETE = 'AUDIT_COMPLETE',
+  TRIGGER_COMPLETE = 'TRIGGER_COMPLETE',
+  SCHEDULE_COMPLETE = 'SCHEDULE_COMPLETE',
+}
+```
+
+#### **WorkflowEvent Enum**
+```typescript
+export enum WorkflowEvent {
+  SCHEDULE_REACHED = 'SCHEDULE_REACHED',
+  MANUAL_TRIGGER = 'MANUAL_TRIGGER',
+  VISUAL_CHANGE_DETECTED = 'VISUAL_CHANGE_DETECTED',
+  NO_CHANGE_DETECTED = 'NO_CHANGE_DETECTED',
+  SCREENSHOTS_CAPTURED = 'SCREENSHOTS_CAPTURED',
+  EXECUTION_FAILED = 'EXECUTION_FAILED',
+  QUALITY_CHECK_PASSED = 'QUALITY_CHECK_PASSED',
+  QUALITY_CHECK_FAILED = 'QUALITY_CHECK_FAILED',
+  SYNC_SUCCESSFUL = 'SYNC_SUCCESSFUL',
+  SYNC_FAILED = 'SYNC_FAILED',
+  CYCLE_COMPLETE = 'CYCLE_COMPLETE',
+}
+```
+
 ### Conditional State Transitions
 
-The system uses conditional routing based on WorkflowMode:
+The system uses enum-based conditional routing with backward compatibility:
 
 ```typescript
-// Example: ChangeDetectionState transitions
-TransitionBuilder.on('NO_CHANGE_DETECTED')
-  .goToIf(
-    'TRIGGER_COMPLETE',
-    (event, contextData) => contextData.workflowMode === WorkflowMode.TRIGGER
+// Example: ChangeDetectionState transitions with type safety
+TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED)
+  .goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) =>
+    contextData.workflowMode === WorkflowMode.TRIGGER
   )
-  .goToIf(
-    'SCHEDULE_COMPLETE',
-    (event, contextData) => contextData.workflowMode === WorkflowMode.SCHEDULE
+  .goToIf(WorkflowState.SCHEDULE_COMPLETE, (event, contextData) =>
+    contextData.workflowMode === WorkflowMode.SCHEDULE
   )
-  .goToIf(
-    'AUDIT_COMPLETE',
-    (event, contextData) => contextData.workflowMode === WorkflowMode.MONITOR
+  .goToIf(WorkflowState.AUDIT_COMPLETE, (event, contextData) =>
+    contextData.workflowMode === WorkflowMode.MONITOR
   );
+
+// Backward compatibility with strings is maintained
+TransitionBuilder.on('NO_CHANGE_DETECTED').goTo('TRIGGER_COMPLETE');
 ```
 
 ## Usage
@@ -356,11 +392,9 @@ npm run typecheck
 
 # ESLint linting
 npm run lint
-npm run lint:fix
 
 # Prettier code formatting
 npm run format
-npm run format:check
 
 # Build TypeScript
 npm run build
@@ -442,7 +476,10 @@ The system generates output in organized directories:
 - **Service Layer Architecture**: Separation between core engine and services
 - **Event-Driven Design**: EventEmitter-based loose coupling
 - **Configuration-Driven Behavior**: JSON-based runtime configuration (for demo purposes)
-- **Enum WorkflowMode**: WorkflowMode enum with utility functions, type guard and validation
+- **Type-Safe Enum System**: Enum system with utility functions and type guards:
+  - **WorkflowMode**: Execution mode selection (MONITOR, TRIGGER, SCHEDULE)
+  - **WorkflowState**: State machine states
+  - **WorkflowEvent**: Event types
 
 ### Technology Stack
 

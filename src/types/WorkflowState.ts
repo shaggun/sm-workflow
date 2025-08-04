@@ -26,24 +26,3 @@ export enum WorkflowState {
   /** Schedule complete state - terminal state for schedule mode */
   SCHEDULE_COMPLETE = 'SCHEDULE_COMPLETE',
 }
-
-/**
- * Type guard to check if a string is a valid WorkflowState
- */
-export function isValidWorkflowState(state: string): state is WorkflowState {
-  return Object.values(WorkflowState).includes(state as WorkflowState);
-}
-
-/**
- * Get all available workflow states as an array
- */
-export function getAllWorkflowStates(): WorkflowState[] {
-  return Object.values(WorkflowState);
-}
-
-/**
- * Get all available workflow states as strings
- */
-export function getAllWorkflowStateStrings(): string[] {
-  return Object.values(WorkflowState);
-}

@@ -35,24 +35,3 @@ export enum WorkflowEvent {
   /** Workflow cycle is complete */
   CYCLE_COMPLETE = 'CYCLE_COMPLETE',
 }
-
-/**
- * Type guard to check if a string is a valid WorkflowEvent
- */
-export function isValidWorkflowEvent(event: string): event is WorkflowEvent {
-  return Object.values(WorkflowEvent).includes(event as WorkflowEvent);
-}
-
-/**
- * Get all available workflow events as an array
- */
-export function getAllWorkflowEvents(): WorkflowEvent[] {
-  return Object.values(WorkflowEvent);
-}
-
-/**
- * Get all available workflow events as strings
- */
-export function getAllWorkflowEventStrings(): string[] {
-  return Object.values(WorkflowEvent);
-}
