@@ -102,6 +102,18 @@ output/                     # Generated screenshots and reports
 
 ## State Machine Architecture
 
+#### 1. Separation of Concerns
+
+- States: Define specific responsibilities and actions
+- Transitions: Handle routing logic and conditions
+- Services: Implement business logic (screenshot, validation, etc.)
+
+#### 2. Event-Driven Design
+
+- States emit events based on execution results
+- Events drive state transitions (not direct state calls)
+- Loose coupling between states
+
 The system implements a state machine with three distinct execution modes and conditional state transitions.
 
 ### WorkflowMode System
