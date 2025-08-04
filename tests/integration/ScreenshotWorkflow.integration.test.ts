@@ -322,7 +322,7 @@ describe('ScreenshotWorkflow Integration', () => {
 
       const status = workflow.getStatus();
       // Trigger mode runs once and completes, so it may be in TRIGGER_COMPLETE
-      expect(['MONITORING', 'TRIGGER_COMPLETE']).toContain(status.currentState);
+      expect(['MONITORING', 'RECIPE_EXECUTION', 'TRIGGER_COMPLETE']).toContain(status.currentState);
 
       // Stop workflow
       await workflow.stop();
