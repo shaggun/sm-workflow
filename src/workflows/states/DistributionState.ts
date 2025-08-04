@@ -65,8 +65,8 @@ export class DistributionState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) => {
-        // Go to trigger completion if in trigger mode
+      TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.TEST_CASE, (event, contextData) => {
+        // Go to test case if in trigger mode
         return contextData.workflowMode === WorkflowMode.TRIGGER;
       }),
       TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.SCHEDULE_COMPLETE, (event, contextData) => {

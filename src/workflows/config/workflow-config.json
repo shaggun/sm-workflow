@@ -20,6 +20,7 @@
         "RECIPE_EXECUTION",
         "QUALITY_AUDIT",
         "DISTRIBUTION",
+        "TEST_CASE",
         "TRIGGER_COMPLETE"
       ]
     },
@@ -42,6 +43,7 @@
     "RECIPE_EXECUTION": "RecipeExecutionState",
     "QUALITY_AUDIT": "QualityAuditState",
     "DISTRIBUTION": "DistributionState",
+    "TEST_CASE": "TestCaseState",
     "AUDIT_COMPLETE": "AuditCompleteState",
     "TRIGGER_COMPLETE": "TriggerCompleteState",
     "SCHEDULE_COMPLETE": "ScheduleCompleteState"

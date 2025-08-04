@@ -7,6 +7,7 @@ import { DistributionState } from './states/DistributionState.js';
 import { AuditCompleteState } from './states/AuditCompleteState.js';
 import { TriggerCompleteState } from './states/TriggerCompleteState.js';
 import { ScheduleCompleteState } from './states/ScheduleCompleteState.js';
+import { TestCaseState } from './states/TestCaseState.js';
 import { WorkflowMode } from '../types/WorkflowMode.js';
 import { WorkflowState } from '../types/WorkflowState.js';
 import { promises as fs } from 'fs';
@@ -35,6 +36,7 @@ export class StateFactory {
     ['RecipeExecutionState', RecipeExecutionState],
     ['QualityAuditState', QualityAuditState],
     ['DistributionState', DistributionState],
+    ['TestCaseState', TestCaseState],
     ['AuditCompleteState', AuditCompleteState],
     ['TriggerCompleteState', TriggerCompleteState],
     ['ScheduleCompleteState', ScheduleCompleteState],

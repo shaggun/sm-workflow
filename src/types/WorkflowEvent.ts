@@ -34,4 +34,7 @@ export enum WorkflowEvent {
 
   /** Workflow cycle is complete */
   CYCLE_COMPLETE = 'CYCLE_COMPLETE',
+
+  /** Test case execution is complete */
+  TEST_COMPLETE = 'TEST_COMPLETE',
 }

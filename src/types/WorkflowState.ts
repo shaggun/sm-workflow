@@ -17,6 +17,9 @@ export enum WorkflowState {
   /** Distribution state - syncs results to external systems */
   DISTRIBUTION = 'DISTRIBUTION',
 
+  /** Test case state - for testing state machine extensibility */
+  TEST_CASE = 'TEST_CASE',
+
   /** Audit complete state - finalizes monitoring cycle */
   AUDIT_COMPLETE = 'AUDIT_COMPLETE',
 
