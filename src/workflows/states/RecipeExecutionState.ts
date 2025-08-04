@@ -3,6 +3,8 @@ import { Event, EventBuilder } from '../../state-machine/Event.js';
 import { Transition, TransitionBuilder } from '../../state-machine/Transition.js';
 import { ScreenshotService, ScreenshotOptions } from '../../screenshot/ScreenshotService.js';
 import { RecipeEngine, Recipe } from '../../screenshot/RecipeEngine.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 
 export class RecipeExecutionState extends BaseState {
   private screenshotService: ScreenshotService;
@@ -11,7 +13,7 @@ export class RecipeExecutionState extends BaseState {
   private readonly maxRetries = 2;
 
   constructor() {
-    super('RECIPE_EXECUTION');
+    super(WorkflowState.RECIPE_EXECUTION);
     this.screenshotService = new ScreenshotService();
     this.recipeEngine = new RecipeEngine(this.screenshotService);
   }
@@ -113,8 +115,8 @@ export class RecipeExecutionState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('SCREENSHOTS_CAPTURED').goTo('QUALITY_AUDIT'),
-      TransitionBuilder.on('EXECUTION_FAILED').goToIf('MONITORING', (event, context) => {
+      TransitionBuilder.on(WorkflowEvent.SCREENSHOTS_CAPTURED).goTo(WorkflowState.QUALITY_AUDIT),
+      TransitionBuilder.on(WorkflowEvent.EXECUTION_FAILED).goToIf(WorkflowState.MONITORING, (event, context) => {
         // Go back to monitoring if we've exhausted retries or it's a critical error
         return this.retryCount >= this.maxRetries;
       }),

@@ -2,12 +2,14 @@ import { BaseState, StateContext } from '../../state-machine/State.js';
 import { Event, EventBuilder } from '../../state-machine/Event.js';
 import { Transition, TransitionBuilder } from '../../state-machine/Transition.js';
 import { ChangeDetectionSummary } from '../../monitoring/ChangeDetector.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
 export class AuditCompleteState extends BaseState {
   constructor() {
-    super('AUDIT_COMPLETE');
+    super(WorkflowState.AUDIT_COMPLETE);
   }
 
   async execute(context: StateContext): Promise<Event | null> {
@@ -48,7 +50,7 @@ export class AuditCompleteState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('CYCLE_COMPLETE').goTo('MONITORING'),
+      TransitionBuilder.on(WorkflowEvent.CYCLE_COMPLETE).goTo(WorkflowState.MONITORING),
     ];
   }
 

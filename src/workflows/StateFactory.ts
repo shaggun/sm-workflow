@@ -8,15 +8,16 @@ import { AuditCompleteState } from './states/AuditCompleteState.js';
 import { TriggerCompleteState } from './states/TriggerCompleteState.js';
 import { ScheduleCompleteState } from './states/ScheduleCompleteState.js';
 import { WorkflowMode } from '../types/WorkflowMode.js';
+import { WorkflowState } from '../types/WorkflowState.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
 export interface WorkflowConfiguration {
   workflows: {
     [mode: string]: {
-      initialState: string;
-      completionState: string;
-      states: string[];
+      initialState: WorkflowState | string;
+      completionState: WorkflowState | string;
+      states: (WorkflowState | string)[];
     };
   };
   stateMapping: {
@@ -83,7 +84,7 @@ export class StateFactory {
    */
   static async createStatesForMode(
     mode: WorkflowMode
-  ): Promise<Map<string, BaseState>> {
+  ): Promise<Map<WorkflowState | string, BaseState>> {
     const config = await this.loadConfiguration();
     const workflowConfig = config.workflows[mode];
 
@@ -93,7 +94,7 @@ export class StateFactory {
       );
     }
 
-    const states = new Map<string, BaseState>();
+    const states = new Map<WorkflowState | string, BaseState>();
 
     // Create states defined in the workflow
     for (const stateName of workflowConfig.states) {
@@ -122,9 +123,9 @@ export class StateFactory {
    * Get workflow configuration for a mode
    */
   static async getWorkflowConfig(mode: WorkflowMode): Promise<{
-    initialState: string;
-    completionState: string;
-    states: string[];
+    initialState: WorkflowState | string;
+    completionState: WorkflowState | string;
+    states: (WorkflowState | string)[];
   }> {
     const config = await this.loadConfiguration();
     const workflowConfig = config.workflows[mode];

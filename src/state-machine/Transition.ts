@@ -1,15 +1,17 @@
 import { Event } from './Event.js';
+import { WorkflowEvent } from '../types/WorkflowEvent.js';
+import { WorkflowState } from '../types/WorkflowState.js';
 
 export interface Transition {
-  eventType: string;
-  targetState: string;
+  eventType: WorkflowEvent | string;
+  targetState: WorkflowState | string;
   condition?: (event: Event, context: Record<string, unknown>) => boolean;
 }
 
 export class TransitionBuilder {
   static create(
-    eventType: string,
-    targetState: string,
+    eventType: WorkflowEvent | string,
+    targetState: WorkflowState | string,
     condition?: (event: Event, context: Record<string, unknown>) => boolean
   ): Transition {
     return {
@@ -19,17 +21,18 @@ export class TransitionBuilder {
     };
   }
 
-  static on(eventType: string): {
-    goTo: (targetState: string) => Transition;
+  static on(eventType: WorkflowEvent | string): {
+    goTo: (targetState: WorkflowState | string) => Transition;
     goToIf: (
-      targetState: string,
+      targetState: WorkflowState | string,
       condition: (event: Event, context: Record<string, unknown>) => boolean
     ) => Transition;
   } {
     return {
-      goTo: (targetState: string) => this.create(eventType, targetState),
+      goTo: (targetState: WorkflowState | string) =>
+        this.create(eventType, targetState),
       goToIf: (
-        targetState: string,
+        targetState: WorkflowState | string,
         condition: (event: Event, context: Record<string, unknown>) => boolean
       ) => this.create(eventType, targetState, condition),
     };

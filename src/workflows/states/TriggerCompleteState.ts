@@ -2,12 +2,13 @@ import { BaseState, StateContext } from '../../state-machine/State.js';
 import { Event, EventBuilder } from '../../state-machine/Event.js';
 import { Transition } from '../../state-machine/Transition.js';
 import { ChangeDetectionSummary } from '../../monitoring/ChangeDetector.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
 export class TriggerCompleteState extends BaseState {
   constructor() {
-    super('TRIGGER_COMPLETE');
+    super(WorkflowState.TRIGGER_COMPLETE);
   }
 
   async execute(context: StateContext): Promise<Event | null> {

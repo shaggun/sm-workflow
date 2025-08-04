@@ -1,16 +1,17 @@
 import { Event } from './Event.js';
 import { State, StateContext, BaseState } from './State.js';
 import { Transition } from './Transition.js';
+import { WorkflowState } from '../types/WorkflowState.js';
 
 export interface StateMachineConfig {
-  initialState: string;
-  states: Map<string, State>;
+  initialState: WorkflowState | string;
+  states: Map<WorkflowState | string, State>;
   context: StateContext;
 }
 
 export class StateMachine {
   private currentState: State | null = null;
-  private readonly states: Map<string, State>;
+  private readonly states: Map<WorkflowState | string, State>;
   private readonly context: StateContext;
   private isRunning = false;
 

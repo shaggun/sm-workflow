@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { DistributionState } from '../../../../src/workflows/states/DistributionState.js';
 import { StateContext } from '../../../../src/state-machine/State.js';
 import { WorkflowMode } from '../../../../src/types/WorkflowMode.js';
+import { WorkflowState } from '../../../../src/types/WorkflowState.js';
+import { WorkflowEvent } from '../../../../src/types/WorkflowEvent.js';
 import { TransitionBuilder } from '../../../../src/state-machine/Transition.js';
 import { EventBuilder } from '../../../../src/state-machine/Event.js';
 
@@ -264,12 +266,12 @@ describe('DistributionState', () => {
   describe('Transition Builder Usage', () => {
     it('should use TransitionBuilder correctly for conditional transitions', () => {
       // Verify that the state uses the same pattern as TransitionBuilder
-      const testTransition = TransitionBuilder.on('SYNC_SUCCESSFUL').goToIf('TRIGGER_COMPLETE', (event, contextData) => {
+      const testTransition = TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) => {
         return contextData.workflowMode === WorkflowMode.TRIGGER;
       });
       
-      expect(testTransition.eventType).toBe('SYNC_SUCCESSFUL');
-      expect(testTransition.targetState).toBe('TRIGGER_COMPLETE');
+      expect(testTransition.eventType).toBe(WorkflowEvent.SYNC_SUCCESSFUL);
+      expect(testTransition.targetState).toBe(WorkflowState.TRIGGER_COMPLETE);
       expect(testTransition.condition).toBeDefined();
       expect(testTransition.condition!(EventBuilder.syncSuccessful(), { workflowMode: WorkflowMode.TRIGGER })).toBe(true);
       expect(testTransition.condition!(EventBuilder.syncSuccessful(), { workflowMode: WorkflowMode.MONITOR })).toBe(false);

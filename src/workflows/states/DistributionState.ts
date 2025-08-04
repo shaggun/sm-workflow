@@ -4,6 +4,8 @@ import { Transition, TransitionBuilder } from '../../state-machine/Transition.js
 import { ChangeDetector, ChangeDetectionSummary } from '../../monitoring/ChangeDetector.js';
 import { ScreenshotResult } from '../../screenshot/ScreenshotService.js';
 import { WorkflowMode } from '../../types/WorkflowMode.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -13,7 +15,7 @@ export class DistributionState extends BaseState {
   private readonly maxRetries = 2;
 
   constructor() {
-    super('DISTRIBUTION');
+    super(WorkflowState.DISTRIBUTION);
     this.changeDetector = new ChangeDetector();
   }
 
@@ -63,23 +65,23 @@ export class DistributionState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('SYNC_SUCCESSFUL').goToIf('TRIGGER_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) => {
         // Go to trigger completion if in trigger mode
         return contextData.workflowMode === WorkflowMode.TRIGGER;
       }),
-      TransitionBuilder.on('SYNC_SUCCESSFUL').goToIf('SCHEDULE_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.SCHEDULE_COMPLETE, (event, contextData) => {
         // Go to schedule completion if in schedule mode
         return contextData.workflowMode === WorkflowMode.SCHEDULE;
       }),
-      TransitionBuilder.on('SYNC_SUCCESSFUL').goToIf('AUDIT_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.SYNC_SUCCESSFUL).goToIf(WorkflowState.AUDIT_COMPLETE, (event, contextData) => {
         // Go to audit completion if in monitor mode
         return contextData.workflowMode === WorkflowMode.MONITOR;
       }),
-      TransitionBuilder.on('SYNC_FAILED').goToIf('DISTRIBUTION', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.SYNC_FAILED).goToIf(WorkflowState.DISTRIBUTION, (event, contextData) => {
         // Retry if we haven't exhausted retries
         return this.retryCount < this.maxRetries;
       }),
-      TransitionBuilder.on('SYNC_FAILED').goToIf('MONITORING', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.SYNC_FAILED).goToIf(WorkflowState.MONITORING, (event, contextData) => {
         // Go back to monitoring if we've exhausted retries
         return this.retryCount >= this.maxRetries;
       }),

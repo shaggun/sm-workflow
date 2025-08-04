@@ -2,12 +2,14 @@ import { BaseState, StateContext } from '../../state-machine/State.js';
 import { Event, EventBuilder } from '../../state-machine/Event.js';
 import { Transition, TransitionBuilder } from '../../state-machine/Transition.js';
 import { Scheduler, ScheduleConfig } from '../../monitoring/Scheduler.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 
 export class MonitoringState extends BaseState {
   private scheduler: Scheduler;
 
   constructor() {
-    super('MONITORING');
+    super(WorkflowState.MONITORING);
     this.scheduler = new Scheduler();
   }
 
@@ -60,8 +62,8 @@ export class MonitoringState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('SCHEDULE_REACHED').goTo('CHANGE_DETECTION'),
-      TransitionBuilder.on('MANUAL_TRIGGER').goTo('CHANGE_DETECTION'),
+      TransitionBuilder.on(WorkflowEvent.SCHEDULE_REACHED).goTo(WorkflowState.CHANGE_DETECTION),
+      TransitionBuilder.on(WorkflowEvent.MANUAL_TRIGGER).goTo(WorkflowState.CHANGE_DETECTION),
     ];
   }
 

@@ -4,6 +4,8 @@ import { Transition, TransitionBuilder } from '../../state-machine/Transition.js
 import { ChangeDetector, ChangeDetectionOptions } from '../../monitoring/ChangeDetector.js';
 import { ScreenshotService, ScreenshotOptions } from '../../screenshot/ScreenshotService.js';
 import { WorkflowMode } from '../../types/WorkflowMode.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -12,7 +14,7 @@ export class ChangeDetectionState extends BaseState {
   private screenshotService: ScreenshotService;
 
   constructor() {
-    super('CHANGE_DETECTION');
+    super(WorkflowState.CHANGE_DETECTION);
     this.changeDetector = new ChangeDetector();
     this.screenshotService = new ScreenshotService();
   }
@@ -87,16 +89,16 @@ export class ChangeDetectionState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('VISUAL_CHANGE_DETECTED').goTo('RECIPE_EXECUTION'),
-      TransitionBuilder.on('NO_CHANGE_DETECTED').goToIf('TRIGGER_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.VISUAL_CHANGE_DETECTED).goTo(WorkflowState.RECIPE_EXECUTION),
+      TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED).goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) => {
         // Go to trigger completion if in trigger mode
         return contextData.workflowMode === WorkflowMode.TRIGGER;
       }),
-      TransitionBuilder.on('NO_CHANGE_DETECTED').goToIf('SCHEDULE_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED).goToIf(WorkflowState.SCHEDULE_COMPLETE, (event, contextData) => {
         // Go to schedule completion if in schedule mode
         return contextData.workflowMode === WorkflowMode.SCHEDULE;
       }),
-      TransitionBuilder.on('NO_CHANGE_DETECTED').goToIf('AUDIT_COMPLETE', (event, contextData) => {
+      TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED).goToIf(WorkflowState.AUDIT_COMPLETE, (event, contextData) => {
         // Go to audit completion if in monitor mode
         return contextData.workflowMode === WorkflowMode.MONITOR;
       }),

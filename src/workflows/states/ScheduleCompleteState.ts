@@ -2,11 +2,12 @@ import { BaseState, StateContext } from '../../state-machine/State.js';
 import { Event } from '../../state-machine/Event.js';
 import { Transition } from '../../state-machine/Transition.js';
 import { WorkflowMode } from '../../types/WorkflowMode.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
 import { promises as fs } from 'fs';
 
 export class ScheduleCompleteState extends BaseState {
   constructor() {
-    super('SCHEDULE_COMPLETE');
+    super(WorkflowState.SCHEDULE_COMPLETE);
   }
 
   async execute(context: StateContext): Promise<Event | null> {

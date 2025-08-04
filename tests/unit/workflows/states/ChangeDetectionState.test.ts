@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ChangeDetectionState } from '../../../../src/workflows/states/ChangeDetectionState.js';
 import { StateContext } from '../../../../src/state-machine/State.js';
 import { WorkflowMode } from '../../../../src/types/WorkflowMode.js';
+import { WorkflowState } from '../../../../src/types/WorkflowState.js';
+import { WorkflowEvent } from '../../../../src/types/WorkflowEvent.js';
 import { TransitionBuilder } from '../../../../src/state-machine/Transition.js';
 import { EventBuilder } from '../../../../src/state-machine/Event.js';
 
@@ -222,12 +224,12 @@ describe('ChangeDetectionState', () => {
   describe('Transition Builder Usage', () => {
     it('should use TransitionBuilder correctly for conditional transitions', () => {
       // Verify that the state uses the same pattern as TransitionBuilder
-      const testTransition = TransitionBuilder.on('NO_CHANGE_DETECTED').goToIf('TRIGGER_COMPLETE', (event, contextData) => {
+      const testTransition = TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED).goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) => {
         return contextData.workflowMode === WorkflowMode.TRIGGER;
       });
       
-      expect(testTransition.eventType).toBe('NO_CHANGE_DETECTED');
-      expect(testTransition.targetState).toBe('TRIGGER_COMPLETE');
+      expect(testTransition.eventType).toBe(WorkflowEvent.NO_CHANGE_DETECTED);
+      expect(testTransition.targetState).toBe(WorkflowState.TRIGGER_COMPLETE);
       expect(testTransition.condition).toBeDefined();
       expect(testTransition.condition!(EventBuilder.noChangeDetected(), { workflowMode: WorkflowMode.TRIGGER })).toBe(true);
       expect(testTransition.condition!(EventBuilder.noChangeDetected(), { workflowMode: WorkflowMode.MONITOR })).toBe(false);

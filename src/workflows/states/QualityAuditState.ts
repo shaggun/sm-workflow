@@ -3,6 +3,8 @@ import { Event, EventBuilder } from '../../state-machine/Event.js';
 import { Transition, TransitionBuilder } from '../../state-machine/Transition.js';
 import { QualityValidator, QualityConfig, QualityReport } from '../../screenshot/QualityValidator.js';
 import { ScreenshotResult } from '../../screenshot/ScreenshotService.js';
+import { WorkflowState } from '../../types/WorkflowState.js';
+import { WorkflowEvent } from '../../types/WorkflowEvent.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -12,7 +14,7 @@ export class QualityAuditState extends BaseState {
   private readonly maxRetries = 1;
 
   constructor() {
-    super('QUALITY_AUDIT');
+    super(WorkflowState.QUALITY_AUDIT);
     this.qualityValidator = new QualityValidator();
   }
 
@@ -100,12 +102,12 @@ export class QualityAuditState extends BaseState {
 
   getTransitions(): Transition[] {
     return [
-      TransitionBuilder.on('QUALITY_CHECK_PASSED').goTo('DISTRIBUTION'),
-      TransitionBuilder.on('QUALITY_CHECK_FAILED').goToIf('RECIPE_EXECUTION', (event, context) => {
+      TransitionBuilder.on(WorkflowEvent.QUALITY_CHECK_PASSED).goTo(WorkflowState.DISTRIBUTION),
+      TransitionBuilder.on(WorkflowEvent.QUALITY_CHECK_FAILED).goToIf(WorkflowState.RECIPE_EXECUTION, (event, context) => {
         // Retry recipe execution if quality check failed and we haven't exhausted retries
         return this.retryCount < this.maxRetries;
       }),
-      TransitionBuilder.on('QUALITY_CHECK_FAILED').goToIf('MONITORING', (event, context) => {
+      TransitionBuilder.on(WorkflowEvent.QUALITY_CHECK_FAILED).goToIf(WorkflowState.MONITORING, (event, context) => {
         // Go back to monitoring if we've exhausted retries
         return this.retryCount >= this.maxRetries;
       }),
