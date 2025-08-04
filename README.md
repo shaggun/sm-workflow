@@ -38,6 +38,22 @@ npm run demo:monitor
 # Open scr/output folder to check screnshots
 ```
 
+## State Machine Architecture
+
+#### 1. Separation of Concerns
+
+- States: Define specific responsibilities and actions
+- Transitions: Handle routing logic and conditions
+- Services: Implement business logic (screenshot, validation, etc.)
+
+#### 2. Event-Driven Design
+
+- States emit events based on execution results
+- Events drive state transitions (not direct state calls)
+- Loose coupling between states
+
+The system implements a state machine with three distinct execution modes and conditional state transitions.
+
 ## Project Structure
 
 ```
@@ -99,22 +115,6 @@ output/                     # Generated screenshots and reports
 ├── quality-reports/        # Quality validation reports
 └── audit-summaries/        # Workflow execution summaries
 ```
-
-## State Machine Architecture
-
-#### 1. Separation of Concerns
-
-- States: Define specific responsibilities and actions
-- Transitions: Handle routing logic and conditions
-- Services: Implement business logic (screenshot, validation, etc.)
-
-#### 2. Event-Driven Design
-
-- States emit events based on execution results
-- Events drive state transitions (not direct state calls)
-- Loose coupling between states
-
-The system implements a state machine with three distinct execution modes and conditional state transitions.
 
 ### WorkflowMode System
 
@@ -240,27 +240,6 @@ export enum WorkflowEvent {
   SYNC_FAILED = 'SYNC_FAILED',
   CYCLE_COMPLETE = 'CYCLE_COMPLETE',
 }
-```
-
-### Conditional State Transitions
-
-The system uses enum-based conditional routing with backward compatibility:
-
-```typescript
-// Example: ChangeDetectionState transitions with type safety
-TransitionBuilder.on(WorkflowEvent.NO_CHANGE_DETECTED)
-  .goToIf(WorkflowState.TRIGGER_COMPLETE, (event, contextData) =>
-    contextData.workflowMode === WorkflowMode.TRIGGER
-  )
-  .goToIf(WorkflowState.SCHEDULE_COMPLETE, (event, contextData) =>
-    contextData.workflowMode === WorkflowMode.SCHEDULE
-  )
-  .goToIf(WorkflowState.AUDIT_COMPLETE, (event, contextData) =>
-    contextData.workflowMode === WorkflowMode.MONITOR
-  );
-
-// Backward compatibility with strings is maintained
-TransitionBuilder.on('NO_CHANGE_DETECTED').goTo('TRIGGER_COMPLETE');
 ```
 
 ## Usage
@@ -481,7 +460,7 @@ The system generates output in organized directories:
 
 ### Key Design Patterns
 
-- **State Machine Pattern**: Finite state automaton with event-driven transitions
+- **State Machine Pattern**: Finite state machine with event-driven transitions
 - **Factory Pattern**: Dynamic state creation through StateFactory
 - **Builder Pattern**: WorkflowBuilder for configuration-driven setup
 - **Service Layer Architecture**: Separation between core engine and services
