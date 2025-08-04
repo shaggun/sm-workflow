@@ -1,7 +1,6 @@
 import { ScreenshotWorkflow, WorkflowConfig } from './workflows/ScreenshotWorkflow.js';
 import { WorkflowMode, isValidWorkflowMode, getAllWorkflowModeStrings } from './types/WorkflowMode.js';
 import { promises as fs } from 'fs';
-import path from 'path';
 
 interface CLIOptions {
   mode: WorkflowMode;
